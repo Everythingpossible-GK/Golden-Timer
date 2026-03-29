@@ -411,37 +411,47 @@
             localStorage.setItem('goldenTimer_email', email);
             await applyCloudIdentity(email);
             window.closeCloudModal();
-            window.showSuccessModal("Cloud Connected", "Your data is now syncing to " + email);
+            window.showSuccessModal("Cloud Connected", "Syncing to " + email);
         };
 
         async function applyCloudIdentity(email) {
+            if (!auth.currentUser) return;
             document.getElementById('userEmailTag').classList.remove('hidden');
             document.getElementById('activeEmail').innerText = email;
             document.getElementById('cloudBtn').innerText = "Sync Active";
             
-            const emailKey = btoa(email); 
-            const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cloud_users', emailKey));
-            
-            if (snap.exists()) {
-                const data = snap.data();
-                if (data.config) applyModelData(data.config);
-                if (data.cycles) {
-                    cycleResults = data.cycles;
-                    updateLCD();
+            const emailKey = btoa(email).replace(/=/g, ""); 
+            try {
+                const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_backups', emailKey));
+                if (snap.exists()) {
+                    const data = snap.data();
+                    if (data.config) applyModelData(data.config);
+                    if (data.cycles) {
+                        cycleResults = data.cycles;
+                        updateLCD();
+                    }
                 }
+                listenToModels();
+            } catch (e) {
+                console.error("Cloud load error:", e);
             }
-            listenToModels();
         }
 
         function listenToModels() {
-            if (!db || !cloudEmail) return;
-            const emailKey = btoa(cloudEmail);
-            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'cloud_users', emailKey, 'models'));
+            if (!db || !cloudEmail || !auth.currentUser) return;
+            const emailKey = btoa(cloudEmail).replace(/=/g, "");
+            // Note: We use a flatter structure to ensure Rule 1 compliance
+            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'process_models'));
             onSnapshot(q, (snapshot) => {
                 const models = [];
-                snapshot.forEach(doc => models.push({ id: doc.id, ...doc.data() }));
+                snapshot.forEach(doc => {
+                    const data = doc.data();
+                    if (data.ownerKey === emailKey) {
+                        models.push({ id: doc.id, ...data });
+                    }
+                });
                 renderModelsList(models);
-            });
+            }, (err) => console.error("Listener error:", err));
         }
 
         function renderModelsList(models) {
@@ -463,18 +473,22 @@
         }
 
         window.loadModel = async (id) => {
-            if (!cloudEmail) return;
-            const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cloud_users', btoa(cloudEmail), 'models', id));
-            if (snap.exists()) {
-                applyModelData(snap.data());
-                window.showSuccessModal("Process Loaded", "Model applied to setup");
-            }
+            if (!cloudEmail || !auth.currentUser) return;
+            try {
+                const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'process_models', id));
+                if (snap.exists()) {
+                    applyModelData(snap.data());
+                    window.showSuccessModal("Process Loaded", "Model applied to setup");
+                }
+            } catch (e) { console.error(e); }
         };
 
         window.deleteModel = async (id) => {
-            if (!cloudEmail) return;
+            if (!cloudEmail || !auth.currentUser) return;
             if(confirm("Delete this saved process model?")) {
-                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cloud_users', btoa(cloudEmail), 'models', id));
+                try {
+                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'process_models', id));
+                } catch (e) { console.error(e); }
             }
         };
 
@@ -494,11 +508,15 @@
                 window.openCloudModal();
                 return;
             }
-            // Sync current state to config object before saving
-            captureConfig();
+            if (!auth.currentUser) return alert("Connecting to server... try again in 1s");
             
+            captureConfig();
             const jobTitle = config.job || "Untitled Process";
+            const emailKey = btoa(cloudEmail).replace(/=/g, "");
+            const modelId = emailKey + "-" + jobTitle.replace(/\s+/g, '-').toLowerCase();
+            
             const data = {
+                ownerKey: emailKey,
                 eqId: config.eqId,
                 staffId: config.staffId,
                 job: jobTitle,
@@ -506,12 +524,13 @@
                 customFilters: config.customFilters,
                 savedAt: Date.now()
             };
+
             try {
-                const modelId = jobTitle.replace(/\s+/g, '-').toLowerCase() + '-' + Date.now().toString().slice(-4);
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cloud_users', btoa(cloudEmail), 'models', modelId), data);
-                window.showSuccessModal("Process Saved", "Saved to cloud account: " + cloudEmail);
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'process_models', modelId), data);
+                window.showSuccessModal("Process Saved", "Saved to cloud: " + cloudEmail);
             } catch (e) {
-                alert("Cloud save failed. Please check connection.");
+                console.error("Save error:", e);
+                alert("Cloud save failed. Ensure path permissions are correct.");
             }
         };
 
@@ -536,16 +555,17 @@
         }
 
         async function syncData() {
-            if (!cloudEmail || !db) return;
+            if (!cloudEmail || !db || !auth.currentUser) return;
             captureConfig();
+            const emailKey = btoa(cloudEmail).replace(/=/g, "");
             const data = {
                 config: config,
                 cycles: cycleResults,
                 updatedAt: Date.now()
             };
             try {
-                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cloud_users', btoa(cloudEmail)), data);
-            } catch (e) {}
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'user_backups', emailKey), data);
+            } catch (e) { console.error("Sync error:", e); }
         }
 
         // Global UI Setup Functions
@@ -574,8 +594,8 @@
             const row = document.createElement('div');
             row.className = "flex gap-2 items-center";
             row.innerHTML = `
-                <input type="text" value="${name}" placeholder="Filter Name (e.g. Cargo)" class="flex-1 p-2 border border-slate-300 rounded-lg text-[10px] font-bold outline-none filter-name text-black">
-                <input type="text" value="${value}" placeholder="Options (Gypsum, Wheat...)" class="flex-1 p-2 border border-slate-300 rounded-lg text-[10px] font-bold outline-none filter-value text-black">
+                <input type="text" value="${name}" placeholder="Filter Name" class="flex-1 p-2 border border-slate-300 rounded-lg text-[10px] font-bold outline-none filter-name text-black">
+                <input type="text" value="${value}" placeholder="Options (A, B...)" class="flex-1 p-2 border border-slate-300 rounded-lg text-[10px] font-bold outline-none filter-value text-black">
                 <button onclick="this.parentElement.remove()" class="text-red-500 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg></button>
             `;
             container.appendChild(row);
@@ -583,10 +603,8 @@
 
         window.goToTimerPage = async () => {
             captureConfig();
-
             if (steps.length === 0) return alert("Add steps first");
             
-            // Build the dynamic dropdowns for the timer page
             const timerDropdownsContainer = document.getElementById('timerDropdownsContainer');
             timerDropdownsContainer.innerHTML = '';
             config.customFilters.forEach((f, i) => {
@@ -601,7 +619,7 @@
                 timerDropdownsContainer.appendChild(div);
             });
 
-            await syncData(); 
+            syncData(); 
 
             document.getElementById('stepGrid').innerHTML = steps.map((name, idx) => `
                 <button id="step-btn-${idx}" onclick="window.recordStep(${idx})" class="step-btn step-btn-inactive shadow-md">${idx + 1}. ${name}</button>`).join('');
@@ -660,7 +678,6 @@
                 document.getElementById('stopCycleBtn').classList.remove('hidden'); 
             } else {
                 if (isPaused || isWaiting) return;
-                
                 if (steps.length === 1 && idx === activeStepIndex) {
                     currentCycleData[activeStepIndex] = (currentCycleData[activeStepIndex] || 0) + (accumulatedStepTime / 1000);
                     autoSaveCycleAndContinue();
@@ -682,8 +699,6 @@
 
         async function autoSaveCycleAndContinue() {
             const now = new Date();
-            
-            // Capture current values from the dropdowns
             const selectedFilters = {};
             config.customFilters.forEach((f, i) => {
                 selectedFilters[f.name] = document.getElementById(`timer-filter-${i}`).value;
@@ -704,7 +719,7 @@
             updateLCD(cycleData.netTotal);
             updateStepVisuals();
             syncData(); 
-            window.showSuccessModal("Cycle OK!", "Auto-saved with selections");
+            window.showSuccessModal("Cycle OK!", "Synced to Cloud");
         }
 
         function updateStepVisuals() {
@@ -802,8 +817,6 @@
 
         function generateCSVContent() {
             let csv = `"Equipment","${config.eqId}"\n"Staff","${config.staffId}"\n"Process","${config.job}"\n"Account","${cloudEmail || 'Local'}"\n`;
-            
-            // Build headers dynamically based on filters
             const filterHeaders = config.customFilters.map(f => `"${f.name}"`).join(",");
             csv += `\n"Cycle","Date","Time",${steps.map(s => `"${s}"`).join(",")},${filterHeaders ? filterHeaders + ',' : ''}"Waiting (s)","Net Total (s)","Gross Total (s)"\n`;
             
@@ -811,15 +824,11 @@
             cycleResults.forEach(r => {
                 let gross = r.netTotal + r.waitTime;
                 totalNet += r.netTotal; totalWait += r.waitTime; totalGross += gross;
-                
                 let row = `${r.cycle},${r.date},${r.time}`;
                 steps.forEach((_, i) => row += `,${(r.stepResults[i]||0).toFixed(2)}`);
-                
-                // Add the selection for this specific cycle
                 config.customFilters.forEach(f => {
                     row += `,"${r.filterSelections ? r.filterSelections[f.name] || '' : ''}"`;
                 });
-
                 csv += `${row},${r.waitTime.toFixed(2)},${r.netTotal.toFixed(2)},${gross.toFixed(2)}\n`;
             });
             const count = cycleResults.length;

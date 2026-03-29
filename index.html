@@ -1,0 +1,853 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Golden Timer</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&family=JetBrains+Mono:wght@700&display=swap');
+        
+        body { 
+            font-family: 'Inter', sans-serif; 
+            background-color: #121417; 
+            color: #ffffff;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar { width: 5px; }
+        .custom-scrollbar::-webkit-scrollbar-track { background: #1a1d21; }
+        .custom-scrollbar::-webkit-scrollbar-thumb { background: #3f444d; border-radius: 10px; }
+
+        .timer-container { 
+            background-color: #a3b18a; 
+            border: 8px solid #2d333a;
+            border-radius: 16px; 
+            padding: 1.5rem 1rem; 
+            position: relative; 
+            width: 100%;
+            box-shadow: inset 0 0 20px rgba(0,0,0,0.2);
+            color: #1c2a1c;
+        }
+
+        .lcd-header {
+            display: flex;
+            justify-content: space-between;
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.85rem; 
+            font-weight: 800;
+            text-transform: uppercase;
+            border-bottom: 1.5px solid rgba(28, 42, 28, 0.3);
+            padding-bottom: 6px;
+            margin-bottom: 1rem;
+        }
+
+        .timer-text { 
+            font-family: 'JetBrains Mono', monospace; 
+            font-weight: 800; 
+            font-size: clamp(3.5rem, 15vw, 5.5rem); 
+            line-height: 1; 
+            text-align: center; 
+            letter-spacing: -2px;
+        }
+
+        .lcd-label {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 0.6rem;
+            font-weight: 800;
+            opacity: 0.8;
+            margin-bottom: -5px;
+        }
+        
+        .btn-grey { 
+            background-color: #fb8c00; 
+            color: white; 
+            font-weight: 900; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 0px #b35900;
+        }
+        .btn-grey:active { transform: translateY(2px); box-shadow: 0 2px 0px #b35900; }
+
+        .btn-blue { 
+            background-color: #039be5; 
+            color: white; 
+            font-weight: 900; 
+            border-radius: 12px; 
+            box-shadow: 0 4px 0px #01579b;
+        }
+        .btn-blue:active { transform: translateY(2px); box-shadow: 0 0px 0px #01579b; }
+
+        .btn-slate { 
+            background-color: #3f444d; 
+            color: white; 
+            font-weight: 700; 
+            border-radius: 10px; 
+            box-shadow: 0 3px 0px #1a1d21;
+        }
+        .btn-slate:active { transform: translateY(1px); box-shadow: 0 1px 0px #1a1d21; }
+
+        .btn-red { 
+            background-color: #d32f2f; 
+            color: white; 
+            font-weight: 900; 
+            border-radius: 14px; 
+            box-shadow: 0 6px 0px #7f0000;
+        }
+        
+        .step-btn { 
+            border-radius: 14px; 
+            padding: 1rem 0.75rem; 
+            text-align: center; 
+            font-weight: 900; 
+            font-size: 0.8rem; 
+            line-height: 1.3; 
+            text-transform: uppercase; 
+            transition: all 0.15s; 
+            min-height: 90px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border: 2px solid #ffffff; 
+            color: #ffffff; 
+        }
+
+        .step-btn-inactive { background-color: #1a1d21; }
+        .step-btn-active { 
+            background-color: #fb8c00; 
+            border-color: #ffffff;
+            box-shadow: 0 0 20px rgba(251, 140, 0, 0.4);
+            animation: pulse-border 1s infinite alternate;
+        }
+        .step-btn-recorded { background-color: #2d333a; color: #4ade80; border-color: #4ade80; }
+
+        @keyframes pulse-border {
+            from { border-color: #ffffff; }
+            to { border-color: #fb8c00; }
+        }
+        
+        .hidden { display: none; }
+        .bold-label { color: #000000 !important; font-weight: 900 !important; font-size: 11px; }
+        .setup-container { background-color: #f8fafc; color: #000000; }
+
+        #cloudStatus {
+            position: fixed;
+            bottom: 10px;
+            right: 10px;
+            font-size: 10px;
+            font-weight: 900;
+            text-transform: uppercase;
+            padding: 4px 8px;
+            border-radius: 4px;
+            background: rgba(0,0,0,0.5);
+            z-index: 100;
+            color: #fb8c00;
+        }
+
+        .model-card {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            padding: 10px;
+            border-radius: 12px;
+            font-size: 10px;
+            font-weight: 800;
+            text-transform: uppercase;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        .model-card:hover {
+            border-color: #039be5;
+            background: #f0f9ff;
+        }
+
+        /* Modal Styles */
+        .modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200;
+            padding: 20px;
+        }
+        .modal-box {
+            background: #ffffff;
+            color: #000;
+            padding: 30px;
+            border-radius: 24px;
+            width: 100%;
+            max-width: 400px;
+            text-align: center;
+        }
+
+        /* Dropdown Styling */
+        .industrial-select {
+            background-color: #1a1d21;
+            color: #ffffff;
+            border: 2px solid #3f444d;
+            border-radius: 8px;
+            padding: 8px;
+            font-size: 12px;
+            font-weight: 800;
+            text-transform: uppercase;
+            outline: none;
+            width: 100%;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='white'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+            background-repeat: no-repeat;
+            background-position: right 8px center;
+            background-size: 16px;
+        }
+    </style>
+</head>
+<body class="min-h-screen p-3 md:p-6 flex flex-col items-center">
+
+    <div id="cloudStatus">Connecting...</div>
+
+    <!-- CLOUD SIGN IN MODAL -->
+    <div id="cloudModal" class="modal-overlay hidden">
+        <div class="modal-box shadow-2xl">
+            <h2 class="text-2xl font-black text-blue-900 uppercase mb-2">Cloud Account</h2>
+            <p class="text-xs font-bold text-slate-500 uppercase mb-6">Enter email to sync your data</p>
+            <input type="email" id="cloudEmailInput" class="w-full p-4 border border-slate-300 rounded-xl mb-4 font-bold outline-none focus:border-blue-500" placeholder="yourname@email.com">
+            <div class="grid grid-cols-2 gap-3">
+                <button onclick="window.closeCloudModal()" class="py-3 bg-slate-200 rounded-xl font-black uppercase text-xs">Cancel</button>
+                <button onclick="window.confirmCloudSync()" class="py-3 bg-blue-600 text-white rounded-xl font-black uppercase text-xs">Sync Now</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 1: SETUP -->
+    <div id="setupPage" class="w-full max-w-[500px] setup-container border border-slate-200 rounded-[2rem] p-6 md:p-8 shadow-2xl my-auto">
+        <div class="flex justify-between items-start mb-6">
+            <h1 class="text-4xl font-black text-blue-900 uppercase tracking-tight italic">Golden Timer</h1>
+            <button onclick="window.openCloudModal()" id="cloudBtn" class="bg-blue-100 text-blue-600 px-3 py-2 rounded-xl text-[10px] font-black uppercase flex items-center gap-1">
+                <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V10h3l-4-5-4 5h3v3H5.5z"></path></svg>
+                Sync Cloud
+            </button>
+        </div>
+        
+        <div class="space-y-6">
+            <!-- CURRENT USER EMAIL DISPLAY -->
+            <div id="userEmailTag" class="hidden bg-green-100 text-green-700 p-2 rounded-lg text-[10px] font-black uppercase text-center">
+                Cloud Connected: <span id="activeEmail"></span>
+            </div>
+
+            <div class="space-y-4">
+                <div class="grid grid-cols-2 gap-3">
+                    <div>
+                        <label class="block bold-label uppercase mb-1">Equipment ID</label>
+                        <input type="text" id="setupEqId" class="w-full p-3 bg-white border border-slate-300 rounded-xl outline-none text-black font-bold text-sm focus:border-blue-500 transition" placeholder="ID">
+                    </div>
+                    <div>
+                        <label class="block bold-label uppercase mb-1">Staff ID</label>
+                        <input type="text" id="setupStaffId" class="w-full p-3 bg-white border border-slate-300 rounded-xl outline-none text-black font-bold text-sm focus:border-blue-500 transition" placeholder="Staff">
+                    </div>
+                </div>
+                <div>
+                    <label class="block bold-label uppercase mb-1">Process Title</label>
+                    <input type="text" id="setupJob" class="w-full p-3 bg-white border border-slate-300 rounded-xl outline-none text-black font-bold text-sm focus:border-blue-500 transition" placeholder="Process Name">
+                </div>
+            </div>
+
+            <!-- LOAD SAVED PROCESS MODELS -->
+            <div id="savedModelsSection" class="pt-6 border-t border-slate-200 hidden">
+                <label class="block text-[14px] bold-label uppercase mb-3 text-blue-600">From Cloud Models</label>
+                <div id="modelsGrid" class="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto pr-1 custom-scrollbar"></div>
+            </div>
+
+            <div class="pt-6 border-t border-slate-200">
+                <div class="flex justify-between items-center mb-3">
+                    <label class="text-[14px] bold-label uppercase text-slate-800">Add Filters (Dropdowns)</label>
+                    <button onclick="window.addFilterRow()" class="text-[10px] bg-blue-600 text-white px-3 py-1.5 rounded-lg font-black uppercase active:scale-95 transition">New Filter +</button>
+                </div>
+                <div id="customFiltersContainer" class="space-y-2"></div>
+                <p class="text-[9px] text-slate-400 font-bold uppercase mt-1 italic">Enter options separated by commas (e.g. Wheat, Gypsum, Corn)</p>
+            </div>
+
+            <div class="pt-6 border-t border-slate-200">
+                <label class="block text-[14px] bold-label uppercase mb-3">Add Steps <span class="text-blue-600 font-black">*</span></label>
+                <div class="flex flex-nowrap gap-2 mb-4 w-full">
+                    <input type="text" id="setupStepInput" class="flex-1 min-w-0 p-3 bg-white border border-slate-300 rounded-xl outline-none text-black font-bold text-sm" placeholder="Step name...">
+                    <button id="addStepBtn" onclick="window.addStepFromSetup()" class="shrink-0 bg-blue-600 text-white px-5 py-2 rounded-xl font-black text-sm active:scale-95 transition">Add</button>
+                </div>
+                <div id="setupStepsList" class="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar"></div>
+            </div>
+
+            <button onclick="window.goToTimerPage()" class="w-full py-4 bg-slate-900 text-white rounded-2xl font-black text-lg hover:bg-black active:scale-[0.98] transition shadow-lg uppercase tracking-wider mt-2">
+                Done - Open Timer
+            </button>
+        </div>
+    </div>
+
+    <!-- PAGE 2: TIMER -->
+    <div id="timerPage" class="w-full max-w-[500px] hidden space-y-4">
+        <div class="flex justify-between items-center mb-1">
+            <button onclick="window.goHome()" class="flex items-center gap-1 text-slate-400 font-bold hover:text-white transition text-xs uppercase tracking-widest">
+                <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M3 12l2-2m0 0l7-7 7 7M5 10v10a1 1 0 001 1h3m10-11l2 2m-2-2v10a1 1 0 01-1 1h-3m-6 0a1 1 0 001-1v-4a1 1 0 011-1h2a1 1 0 011 1v4a1 1 0 001 1m-6 0h6"/></svg>
+                HOME
+            </button>
+            <div id="currentDateDisplay" class="text-[10px] font-black text-slate-500 uppercase tracking-widest"></div>
+        </div>
+
+        <div class="timer-container shadow-2xl">
+            <div class="lcd-header">
+                <div>LAST <span id="lastCycleDisplay">0.00</span></div>
+                <div>NO. OF CYCLES <span id="cycleCountDisplay">0</span></div>
+            </div>
+            <div class="timer-text-container">
+                <div class="lcd-label">CURRENT STEP TIMER</div>
+                <div id="mainTimer" class="timer-text">0.00</div>
+            </div>
+        </div>
+
+        <!-- DYNAMIC DROPDOWNS ON TIMER PAGE -->
+        <div id="timerDropdownsContainer" class="grid grid-cols-1 gap-2"></div>
+
+        <div class="grid grid-cols-2 gap-4">
+            <button id="pauseBtn" onclick="window.togglePause()" class="btn-grey py-5 text-md uppercase tracking-widest">Pause</button>
+            <button id="waitBtn" onclick="window.toggleWaiting()" class="btn-blue py-5 text-md uppercase tracking-widest">Waiting</button>
+        </div>
+
+        <div class="grid grid-cols-2 gap-3">
+            <button onclick="window.undoLastCycle()" class="btn-slate py-4 text-[10px] uppercase font-black">Reset Last</button>
+            <button onclick="window.resetFull()" class="btn-slate py-4 text-[10px] uppercase font-black bg-slate-700">Reset All</button>
+        </div>
+
+        <div id="stepGrid" class="grid grid-cols-2 gap-3 pt-2"></div>
+
+        <button id="stopCycleBtn" onclick="window.stopCycle()" class="btn-red w-full py-6 text-2xl uppercase tracking-widest mt-4 shadow-xl active:scale-95 transition hidden">STOP & RECORD</button>
+
+        <button onclick="window.downloadReport()" class="w-full py-6 bg-[#ffffff] text-[#121417] rounded-2xl text-xl font-black uppercase tracking-widest active:scale-95 transition mt-6 shadow-2xl border-4 border-slate-700">Download CSV Report</button>
+
+        <button onclick="window.shareReport()" class="w-full py-5 bg-[#039be5] text-white rounded-2xl text-lg font-black uppercase tracking-widest active:scale-95 transition mt-3 shadow-2xl border-4 border-[#01579b] flex items-center justify-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
+            Share Report
+        </button>
+
+        <!-- SAVE PROCESS BUTTON -->
+        <button onclick="window.saveCurrentProcessModel()" class="w-full py-4 bg-slate-800 text-white rounded-2xl text-sm font-black uppercase tracking-widest active:scale-95 transition mt-3 border-2 border-slate-600 flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            Save Model to Cloud
+        </button>
+
+        <div id="sessionStatus" class="text-center text-[10px] font-black text-slate-600 uppercase tracking-widest py-3 italic">Ready - Click any step to begin</div>
+    </div>
+
+    <!-- Success Modal -->
+    <div id="recordModal" class="fixed inset-0 flex items-center justify-center bg-black/90 backdrop-blur-sm z-50 hidden">
+        <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl text-center scale-90 mx-4 w-full max-w-sm" id="modalContent">
+            <div class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
+                <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
+            </div>
+            <h2 class="text-2xl font-black text-slate-800 uppercase" id="successMsg">Success!</h2>
+            <p id="modalSubText" class="text-slate-500 font-bold uppercase text-xs mt-2 tracking-tighter">Action Synced to Cloud</p>
+        </div>
+    </div>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Variables
+        let steps = []; 
+        let cycleResults = []; 
+        let currentCycleData = {}; 
+        let config = { eqId: '', staffId: '', job: '', customFilters: [] };
+        let cloudEmail = localStorage.getItem('goldenTimer_email') || '';
+        let isRunning = false; let isPaused = false; let isWaiting = false; let activeStepIndex = -1;
+        let accumulatedStepTime = 0; let lastTimestamp = 0; let cycleWaitTime = 0; let timerInterval = null;
+
+        // Firebase Setup
+        let db, auth;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'golden-timer-standard';
+
+        try {
+            const firebaseConfig = JSON.parse(__firebase_config);
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+
+            const initAuth = async () => {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            };
+
+            onAuthStateChanged(auth, (u) => {
+                if (u) {
+                    document.getElementById('cloudStatus').innerText = "ONLINE";
+                    document.getElementById('cloudStatus').style.color = "#4ade80";
+                    if (cloudEmail) {
+                        applyCloudIdentity(cloudEmail);
+                    }
+                }
+            });
+
+            initAuth();
+        } catch (err) {
+            document.getElementById('cloudStatus').innerText = "OFFLINE";
+            document.getElementById('cloudStatus').style.color = "#ef4444";
+        }
+
+        // UI Logic
+        window.openCloudModal = () => {
+            document.getElementById('cloudEmailInput').value = cloudEmail;
+            document.getElementById('cloudModal').classList.remove('hidden');
+        };
+        window.closeCloudModal = () => document.getElementById('cloudModal').classList.add('hidden');
+
+        window.confirmCloudSync = async () => {
+            const email = document.getElementById('cloudEmailInput').value.trim().toLowerCase();
+            if (!email) return alert("Please enter a valid email");
+            
+            cloudEmail = email;
+            localStorage.setItem('goldenTimer_email', email);
+            await applyCloudIdentity(email);
+            window.closeCloudModal();
+            window.showSuccessModal("Cloud Connected", "Your data is now syncing to " + email);
+        };
+
+        async function applyCloudIdentity(email) {
+            document.getElementById('userEmailTag').classList.remove('hidden');
+            document.getElementById('activeEmail').innerText = email;
+            document.getElementById('cloudBtn').innerText = "Sync Active";
+            
+            const emailKey = btoa(email); 
+            const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cloud_users', emailKey));
+            
+            if (snap.exists()) {
+                const data = snap.data();
+                if (data.config) applyModelData(data.config);
+                if (data.cycles) {
+                    cycleResults = data.cycles;
+                    updateLCD();
+                }
+            }
+            listenToModels();
+        }
+
+        function listenToModels() {
+            if (!db || !cloudEmail) return;
+            const emailKey = btoa(cloudEmail);
+            const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'cloud_users', emailKey, 'models'));
+            onSnapshot(q, (snapshot) => {
+                const models = [];
+                snapshot.forEach(doc => models.push({ id: doc.id, ...doc.data() }));
+                renderModelsList(models);
+            });
+        }
+
+        function renderModelsList(models) {
+            const section = document.getElementById('savedModelsSection');
+            const grid = document.getElementById('modelsGrid');
+            if (models.length === 0) {
+                section.classList.add('hidden');
+                return;
+            }
+            section.classList.remove('hidden');
+            grid.innerHTML = models.map(m => `
+                <div class="model-card group" onclick="window.loadModel('${m.id}')">
+                    <span class="truncate pr-2">${m.job || 'Unnamed Process'}</span>
+                    <button onclick="event.stopPropagation(); window.deleteModel('${m.id}')" class="text-slate-300 hover:text-red-500 p-1">
+                        <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
+                    </button>
+                </div>
+            `).join('');
+        }
+
+        window.loadModel = async (id) => {
+            if (!cloudEmail) return;
+            const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cloud_users', btoa(cloudEmail), 'models', id));
+            if (snap.exists()) {
+                applyModelData(snap.data());
+                window.showSuccessModal("Process Loaded", "Model applied to setup");
+            }
+        };
+
+        window.deleteModel = async (id) => {
+            if (!cloudEmail) return;
+            if(confirm("Delete this saved process model?")) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cloud_users', btoa(cloudEmail), 'models', id));
+            }
+        };
+
+        function applyModelData(data) {
+            document.getElementById('setupEqId').value = data.eqId || '';
+            document.getElementById('setupStaffId').value = data.staffId || '';
+            document.getElementById('setupJob').value = data.job || '';
+            steps = data.steps || [];
+            window.renderSetupSteps();
+            const container = document.getElementById('customFiltersContainer');
+            container.innerHTML = '';
+            (data.customFilters || []).forEach(f => window.addFilterRow(f.name, f.options ? f.options.join(', ') : ''));
+        }
+
+        window.saveCurrentProcessModel = async () => {
+            if (!cloudEmail) {
+                window.openCloudModal();
+                return;
+            }
+            // Sync current state to config object before saving
+            captureConfig();
+            
+            const jobTitle = config.job || "Untitled Process";
+            const data = {
+                eqId: config.eqId,
+                staffId: config.staffId,
+                job: jobTitle,
+                steps: steps,
+                customFilters: config.customFilters,
+                savedAt: Date.now()
+            };
+            try {
+                const modelId = jobTitle.replace(/\s+/g, '-').toLowerCase() + '-' + Date.now().toString().slice(-4);
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cloud_users', btoa(cloudEmail), 'models', modelId), data);
+                window.showSuccessModal("Process Saved", "Saved to cloud account: " + cloudEmail);
+            } catch (e) {
+                alert("Cloud save failed. Please check connection.");
+            }
+        };
+
+        function captureConfig() {
+            config.eqId = document.getElementById('setupEqId').value;
+            config.staffId = document.getElementById('setupStaffId').value;
+            config.job = document.getElementById('setupJob').value;
+            
+            const names = document.querySelectorAll('.filter-name');
+            const values = document.querySelectorAll('.filter-value');
+            config.customFilters = [];
+            names.forEach((n, i) => {
+                const nameStr = n.value.trim();
+                const optionsStr = values[i].value.trim();
+                if(nameStr) {
+                    config.customFilters.push({ 
+                        name: nameStr, 
+                        options: optionsStr.split(',').map(s => s.trim()).filter(s => s.length > 0) 
+                    });
+                }
+            });
+        }
+
+        async function syncData() {
+            if (!cloudEmail || !db) return;
+            captureConfig();
+            const data = {
+                config: config,
+                cycles: cycleResults,
+                updatedAt: Date.now()
+            };
+            try {
+                await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'cloud_users', btoa(cloudEmail)), data);
+            } catch (e) {}
+        }
+
+        // Global UI Setup Functions
+        window.addStepFromSetup = () => {
+            const input = document.getElementById('setupStepInput');
+            const val = input.value.trim();
+            if (!val) return;
+            steps.push(val);
+            input.value = '';
+            window.renderSetupSteps();
+        };
+
+        window.renderSetupSteps = () => {
+            const list = document.getElementById('setupStepsList');
+            list.innerHTML = steps.map((name, idx) => `
+                <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 text-xs font-black uppercase text-slate-800">
+                    <span>#${idx + 1} ${name}</span>
+                    <button onclick="window.removeStep(${idx})" class="text-red-500">REMOVE</button>
+                </div>`).join('');
+        };
+
+        window.removeStep = (idx) => { steps.splice(idx, 1); window.renderSetupSteps(); };
+
+        window.addFilterRow = (name = '', value = '') => {
+            const container = document.getElementById('customFiltersContainer');
+            const row = document.createElement('div');
+            row.className = "flex gap-2 items-center";
+            row.innerHTML = `
+                <input type="text" value="${name}" placeholder="Filter Name (e.g. Cargo)" class="flex-1 p-2 border border-slate-300 rounded-lg text-[10px] font-bold outline-none filter-name text-black">
+                <input type="text" value="${value}" placeholder="Options (Gypsum, Wheat...)" class="flex-1 p-2 border border-slate-300 rounded-lg text-[10px] font-bold outline-none filter-value text-black">
+                <button onclick="this.parentElement.remove()" class="text-red-500 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            `;
+            container.appendChild(row);
+        };
+
+        window.goToTimerPage = async () => {
+            captureConfig();
+
+            if (steps.length === 0) return alert("Add steps first");
+            
+            // Build the dynamic dropdowns for the timer page
+            const timerDropdownsContainer = document.getElementById('timerDropdownsContainer');
+            timerDropdownsContainer.innerHTML = '';
+            config.customFilters.forEach((f, i) => {
+                const div = document.createElement('div');
+                div.className = "space-y-1";
+                div.innerHTML = `
+                    <label class="block text-[10px] font-black text-slate-400 uppercase tracking-widest pl-1">${f.name}</label>
+                    <select id="timer-filter-${i}" class="industrial-select">
+                        ${f.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                    </select>
+                `;
+                timerDropdownsContainer.appendChild(div);
+            });
+
+            await syncData(); 
+
+            document.getElementById('stepGrid').innerHTML = steps.map((name, idx) => `
+                <button id="step-btn-${idx}" onclick="window.recordStep(${idx})" class="step-btn step-btn-inactive shadow-md">${idx + 1}. ${name}</button>`).join('');
+            document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString();
+            document.getElementById('setupPage').classList.add('hidden');
+            document.getElementById('timerPage').classList.remove('hidden');
+            updateLCD();
+        };
+
+        window.goHome = () => { 
+            stopTimer(); 
+            document.getElementById('timerPage').classList.add('hidden'); 
+            document.getElementById('setupPage').classList.remove('hidden'); 
+        };
+
+        function startTimer() { 
+            if (timerInterval) clearInterval(timerInterval);
+            lastTimestamp = Date.now(); 
+            timerInterval = setInterval(tick, 10); 
+            isRunning = true; 
+        }
+
+        function stopTimer() { 
+            clearInterval(timerInterval); 
+            timerInterval = null;
+            isRunning = false; 
+            activeStepIndex = -1; 
+            document.getElementById('stopCycleBtn').classList.add('hidden'); 
+        }
+
+        function tick() {
+            if (isPaused) return;
+            const now = Date.now(); const delta = now - lastTimestamp; lastTimestamp = now;
+            if (!isWaiting) accumulatedStepTime += delta; else cycleWaitTime += delta;
+            document.getElementById('mainTimer').innerText = (accumulatedStepTime / 1000).toFixed(2);
+        }
+
+        window.togglePause = () => { 
+            if (!isRunning) return;
+            isPaused = !isPaused; 
+            const btn = document.getElementById('pauseBtn');
+            btn.innerText = isPaused ? "Resume" : "Pause";
+            btn.style.backgroundColor = isPaused ? "#2d333a" : "#fb8c00";
+        };
+
+        window.toggleWaiting = () => { 
+            if (!isRunning) return;
+            isWaiting = !isWaiting; 
+            const btn = document.getElementById('waitBtn');
+            btn.style.backgroundColor = isWaiting ? "#2d333a" : "#039be5";
+        };
+
+        window.recordStep = (idx) => {
+            if (!isRunning) { 
+                startTimer(); activeStepIndex = idx; 
+                document.getElementById('stopCycleBtn').classList.remove('hidden'); 
+            } else {
+                if (isPaused || isWaiting) return;
+                
+                if (steps.length === 1 && idx === activeStepIndex) {
+                    currentCycleData[activeStepIndex] = (currentCycleData[activeStepIndex] || 0) + (accumulatedStepTime / 1000);
+                    autoSaveCycleAndContinue();
+                    return;
+                }
+                if (steps.length > 1 && idx === 0 && activeStepIndex !== 0) {
+                    currentCycleData[activeStepIndex] = (currentCycleData[activeStepIndex] || 0) + (accumulatedStepTime / 1000);
+                    autoSaveCycleAndContinue();
+                    return;
+                }
+                if (idx !== activeStepIndex) {
+                    currentCycleData[activeStepIndex] = (currentCycleData[activeStepIndex] || 0) + (accumulatedStepTime / 1000);
+                    accumulatedStepTime = 0; activeStepIndex = idx;
+                }
+            }
+            updateStepVisuals();
+            document.getElementById('sessionStatus').innerText = "TIMING: " + steps[activeStepIndex];
+        };
+
+        async function autoSaveCycleAndContinue() {
+            const now = new Date();
+            
+            // Capture current values from the dropdowns
+            const selectedFilters = {};
+            config.customFilters.forEach((f, i) => {
+                selectedFilters[f.name] = document.getElementById(`timer-filter-${i}`).value;
+            });
+
+            const cycleData = { 
+                cycle: cycleResults.length + 1, 
+                date: now.toLocaleDateString(), 
+                time: now.toLocaleTimeString(), 
+                stepResults: {...currentCycleData}, 
+                filterSelections: selectedFilters,
+                netTotal: Object.values(currentCycleData).reduce((a,b)=>a+b,0), 
+                waitTime: cycleWaitTime/1000 
+            };
+            cycleResults.push(cycleData);
+            
+            accumulatedStepTime = 0; cycleWaitTime = 0; currentCycleData = {}; activeStepIndex = 0; 
+            updateLCD(cycleData.netTotal);
+            updateStepVisuals();
+            syncData(); 
+            window.showSuccessModal("Cycle OK!", "Auto-saved with selections");
+        }
+
+        function updateStepVisuals() {
+            steps.forEach((_, i) => {
+                const b = document.getElementById(`step-btn-${i}`);
+                if (!b) return;
+                b.className = 'step-btn shadow-md';
+                if (i === activeStepIndex) b.classList.add('step-btn-active');
+                else if (currentCycleData[i] !== undefined) b.classList.add('step-btn-recorded');
+                else b.classList.add('step-btn-inactive');
+            });
+        }
+
+        window.stopCycle = async () => {
+            if (!isRunning) return;
+            currentCycleData[activeStepIndex] = (currentCycleData[activeStepIndex] || 0) + (accumulatedStepTime / 1000);
+            
+            const selectedFilters = {};
+            config.customFilters.forEach((f, i) => {
+                selectedFilters[f.name] = document.getElementById(`timer-filter-${i}`).value;
+            });
+
+            const now = new Date();
+            const cycleData = { 
+                cycle: cycleResults.length + 1, 
+                date: now.toLocaleDateString(), time: now.toLocaleTimeString(), 
+                stepResults: {...currentCycleData}, 
+                filterSelections: selectedFilters,
+                netTotal: Object.values(currentCycleData).reduce((a,b)=>a+b,0), 
+                waitTime: cycleWaitTime/1000 
+            };
+            cycleResults.push(cycleData);
+            syncData();
+            finishCycle(cycleData.netTotal);
+        };
+
+        function finishCycle(lastTime) {
+            stopTimer(); accumulatedStepTime = 0; cycleWaitTime = 0;
+            document.getElementById('mainTimer').innerText = "0.00";
+            currentCycleData = {};
+            updateLCD(lastTime);
+            window.showSuccessModal("Cycle Recorded", "Session synced to cloud");
+            setTimeout(() => {
+                steps.forEach((_, i) => {
+                    const b = document.getElementById(`step-btn-${i}`);
+                    if(b) b.className = 'step-btn step-btn-inactive shadow-md';
+                });
+                document.getElementById('sessionStatus').innerText = "Ready - Next Cycle: " + (cycleResults.length + 1);
+            }, 1000);
+        }
+
+        function updateLCD(lastTime = null) {
+            document.getElementById('cycleCountDisplay').innerText = cycleResults.length;
+            if (lastTime !== null) {
+                document.getElementById('lastCycleDisplay').innerText = lastTime.toFixed(2);
+            } else if (cycleResults.length > 0) {
+                document.getElementById('lastCycleDisplay').innerText = cycleResults[cycleResults.length - 1].netTotal.toFixed(2);
+            } else {
+                document.getElementById('lastCycleDisplay').innerText = "0.00";
+            }
+        }
+
+        window.showSuccessModal = (title, subtext) => {
+            const modal = document.getElementById('recordModal');
+            document.getElementById('successMsg').innerText = title;
+            document.getElementById('modalSubText').innerText = subtext;
+            modal.classList.remove('hidden');
+            setTimeout(() => modal.classList.add('hidden'), 1000);
+        };
+
+        window.undoLastCycle = async () => { 
+            if(cycleResults.length > 0) {
+                if(confirm("Delete last recorded cycle?")) {
+                    cycleResults.pop(); 
+                    await syncData();
+                    updateLCD();
+                }
+            } 
+        };
+        
+        window.resetFull = async () => { 
+            if(confirm("ERASE ALL SYSTEM DATA AND START OVER?")) { 
+                cycleResults = []; 
+                await syncData();
+                updateLCD(); 
+                stopTimer();
+                accumulatedStepTime = 0;
+                document.getElementById('mainTimer').innerText = "0.00";
+                steps.forEach((_, i) => {
+                    const b = document.getElementById(`step-btn-${i}`);
+                    if(b) b.className = 'step-btn step-btn-inactive shadow-md';
+                });
+            } 
+        };
+
+        function generateCSVContent() {
+            let csv = `"Equipment","${config.eqId}"\n"Staff","${config.staffId}"\n"Process","${config.job}"\n"Account","${cloudEmail || 'Local'}"\n`;
+            
+            // Build headers dynamically based on filters
+            const filterHeaders = config.customFilters.map(f => `"${f.name}"`).join(",");
+            csv += `\n"Cycle","Date","Time",${steps.map(s => `"${s}"`).join(",")},${filterHeaders ? filterHeaders + ',' : ''}"Waiting (s)","Net Total (s)","Gross Total (s)"\n`;
+            
+            let totalNet = 0; let totalWait = 0; let totalGross = 0;
+            cycleResults.forEach(r => {
+                let gross = r.netTotal + r.waitTime;
+                totalNet += r.netTotal; totalWait += r.waitTime; totalGross += gross;
+                
+                let row = `${r.cycle},${r.date},${r.time}`;
+                steps.forEach((_, i) => row += `,${(r.stepResults[i]||0).toFixed(2)}`);
+                
+                // Add the selection for this specific cycle
+                config.customFilters.forEach(f => {
+                    row += `,"${r.filterSelections ? r.filterSelections[f.name] || '' : ''}"`;
+                });
+
+                csv += `${row},${r.waitTime.toFixed(2)},${r.netTotal.toFixed(2)},${gross.toFixed(2)}\n`;
+            });
+            const count = cycleResults.length;
+            csv += `\n"SUMMARY STATISTICS"\n"Total Cycles","${count}"\n"Avg Net Cycle Time (s)","${count > 0 ? (totalNet / count).toFixed(2) : "0.00"}"\n"Avg Waiting Time (s)","${count > 0 ? (totalWait / count).toFixed(2) : "0.00"}"\n"Avg Gross Cycle Time (s)","${count > 0 ? (totalGross / count).toFixed(2) : "0.00"}"\n`;
+            return csv;
+        }
+
+        window.downloadReport = () => {
+            if (cycleResults.length === 0) return alert("NO DATA COLLECTED");
+            const csv = generateCSVContent();
+            const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            link.href = URL.createObjectURL(blob);
+            link.download = `GoldenTimer_Report_${new Date().toISOString().slice(0,10)}.csv`;
+            link.click();
+        };
+
+        window.shareReport = async () => {
+            if (cycleResults.length === 0) return alert("NO DATA COLLECTED");
+            const csv = generateCSVContent();
+            const fileName = `GoldenTimer_Report_${new Date().toISOString().slice(0,10)}.csv`;
+            if (navigator.share && navigator.canShare && navigator.canShare({ files: [new File([], 'a.csv')] })) {
+                try {
+                    const file = new File(["\ufeff" + csv], fileName, { type: 'text/csv' });
+                    await navigator.share({ title: 'Golden Timer Report', files: [file] });
+                } catch (err) { if (err.name !== 'AbortError') window.downloadReport(); }
+            } else { window.downloadReport(); }
+        };
+    </script>
+</body>
+</html>

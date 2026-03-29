@@ -230,8 +230,8 @@
             <div class="w-16 h-16 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-4">
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2-2v10a2 2 0 002 2z"></path></svg>
             </div>
-            <h2 class="text-2xl font-black text-blue-900 uppercase mb-2">Cloud Login</h2>
-            <p class="text-xs font-bold text-slate-500 uppercase mb-6">Restore process steps and recorded data</p>
+            <h2 class="text-2xl font-black text-blue-900 uppercase mb-2">Cloud Sync</h2>
+            <p class="text-xs font-bold text-slate-500 uppercase mb-6">Enter email to restore your previous sessions</p>
             <input type="email" id="cloudEmailInput" class="w-full p-4 border-2 border-slate-200 rounded-xl mb-4 font-black outline-none focus:border-blue-500 text-center" placeholder="yourname@email.com">
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="window.closeCloudModal()" class="py-4 bg-slate-100 rounded-xl font-black uppercase text-xs">Cancel</button>
@@ -243,7 +243,7 @@
     <!-- SAVE DESTINATION MODAL -->
     <div id="saveDestModal" class="modal-overlay hidden">
         <div class="modal-box shadow-2xl">
-            <h2 class="text-xl font-black text-slate-800 uppercase mb-1">Save & Export</h2>
+            <h2 class="text-xl font-black text-slate-800 uppercase mb-1">Save Process</h2>
             <p class="text-[10px] font-bold text-slate-400 uppercase mb-6 italic">Select destination to secure your study</p>
             
             <div class="space-y-2 text-left">
@@ -253,7 +253,7 @@
                     </div>
                     <div>
                         <p class="font-black text-xs uppercase">Google Drive</p>
-                        <p class="text-[9px] text-slate-500 font-bold uppercase">Cloud process backup</p>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase">Linked to cloud account</p>
                     </div>
                 </div>
 
@@ -272,8 +272,8 @@
                         <svg class="w-6 h-6 text-slate-800" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
                     </div>
                     <div>
-                        <p class="font-black text-xs uppercase">Save to File</p>
-                        <p class="text-[9px] text-slate-500 font-bold uppercase">Direct download to Device</p>
+                        <p class="font-black text-xs uppercase">Direct Save</p>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase">Download to Mobile/PC</p>
                     </div>
                 </div>
             </div>
@@ -288,13 +288,13 @@
             <h1 class="text-4xl font-black text-blue-900 uppercase tracking-tight italic">Golden Timer</h1>
             <button onclick="window.openCloudModal()" id="cloudBtn" class="bg-blue-600 text-white px-3 py-2 rounded-xl text-[10px] font-black uppercase flex items-center gap-1 hover:bg-blue-700 transition shadow-lg">
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V10h3l-4-5-4 5h3v3H5.5z"></path></svg>
-                Load from Cloud
+                Sync Email
             </button>
         </div>
         
         <div class="space-y-6">
             <div id="userEmailTag" class="hidden bg-green-500 text-white p-3 rounded-xl text-[10px] font-black uppercase text-center shadow-md">
-                SYNCED: <span id="activeEmail" class="underline"></span>
+                CLOUD ACTIVE: <span id="activeEmail" class="underline"></span>
             </div>
 
             <div class="space-y-4">
@@ -314,24 +314,23 @@
                 </div>
             </div>
 
-            <!-- LOAD SAVED PROCESS MODELS -->
             <div id="savedModelsSection" class="pt-6 border-t border-slate-200 hidden">
-                <label class="block text-[14px] bold-label uppercase mb-3 text-blue-600">Saved Study Models</label>
+                <label class="block text-[14px] bold-label uppercase mb-3 text-blue-600">Restore Process Models</label>
                 <div id="modelsGrid" class="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto pr-1 custom-scrollbar"></div>
             </div>
 
             <div class="pt-6 border-t border-slate-200">
                 <div class="flex justify-between items-center mb-3">
-                    <label class="text-[14px] bold-label uppercase text-slate-800 italic">Study Parameters</label>
-                    <button onclick="window.addFilterRow()" class="text-[10px] bg-blue-600 text-white px-3 py-1.5 rounded-lg font-black uppercase active:scale-95 transition">Add Parameter +</button>
+                    <label class="text-[14px] bold-label uppercase text-slate-800">Process Parameters</label>
+                    <button onclick="window.addFilterRow()" class="text-[10px] bg-blue-600 text-white px-3 py-1.5 rounded-lg font-black uppercase active:scale-95 transition">Add Dropdown +</button>
                 </div>
                 <div id="customFiltersContainer" class="space-y-2"></div>
             </div>
 
             <div class="pt-6 border-t border-slate-200">
-                <label class="block text-[14px] bold-label uppercase mb-3 text-slate-800">Add Study Steps <span class="text-blue-600 font-black">*</span></label>
+                <label class="block text-[14px] bold-label uppercase mb-3 text-slate-800">Define Study Steps <span class="text-blue-600 font-black">*</span></label>
                 <div class="flex flex-nowrap gap-2 mb-4 w-full">
-                    <input type="text" id="setupStepInput" class="flex-1 min-w-0 p-3 bg-white border-2 border-slate-100 rounded-xl outline-none text-black font-bold text-sm" placeholder="e.g., Loading">
+                    <input type="text" id="setupStepInput" class="flex-1 min-w-0 p-3 bg-white border-2 border-slate-100 rounded-xl outline-none text-black font-bold text-sm" placeholder="e.g., Unloading">
                     <button id="addStepBtn" onclick="window.addStepFromSetup()" class="shrink-0 bg-blue-600 text-white px-5 py-2 rounded-xl font-black text-sm active:scale-95 transition shadow-lg">Add</button>
                 </div>
                 <div id="setupStepsList" class="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar"></div>
@@ -356,7 +355,7 @@
         <div class="timer-container shadow-2xl">
             <div class="lcd-header">
                 <div>LAST CYCLE <span id="lastCycleDisplay">0.00</span></div>
-                <div>CYCLES <span id="cycleCountDisplay">0</span></div>
+                <div>TOTAL CYCLES <span id="cycleCountDisplay">0</span></div>
             </div>
             <div class="timer-text-container">
                 <div class="lcd-label">STUDY TIMER</div>
@@ -380,14 +379,13 @@
 
         <button id="stopCycleBtn" onclick="window.stopCycle()" class="btn-red w-full py-6 text-2xl uppercase tracking-widest mt-4 shadow-xl active:scale-95 transition hidden">STOP & RECORD</button>
 
-        <!-- DOWNLOAD BUTTON (Restored) -->
-        <button onclick="window.downloadReport()" class="w-full py-6 bg-white text-[#121417] rounded-2xl text-xl font-black uppercase tracking-widest active:scale-95 transition mt-6 shadow-2xl border-4 border-slate-700">
+        <button onclick="window.downloadReport()" class="w-full py-6 bg-[#ffffff] text-[#121417] rounded-2xl text-xl font-black uppercase tracking-widest active:scale-95 transition mt-6 shadow-2xl border-4 border-slate-700">
             Download CSV Report
         </button>
 
         <button onclick="window.openSaveDestModal()" class="w-full py-4 bg-slate-800 text-white rounded-2xl text-sm font-black uppercase tracking-widest active:scale-95 transition mt-3 border-2 border-slate-600 flex items-center justify-center gap-2">
             <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-            Save to Cloud Drive
+            Save Model to Cloud
         </button>
 
         <button onclick="window.shareReport()" class="w-full py-5 bg-[#039be5] text-white rounded-2xl text-lg font-black uppercase tracking-widest active:scale-95 transition mt-3 shadow-lg flex items-center justify-center gap-2">
@@ -398,27 +396,42 @@
         <div id="sessionStatus" class="text-center text-[10px] font-black text-slate-600 uppercase tracking-widest py-3 italic">Ready to Record</div>
     </div>
 
-    <!-- Global Modals -->
+    <!-- Global Success Notification -->
     <div id="recordModal" class="fixed inset-0 flex items-center justify-center bg-black/90 backdrop-blur-sm z-50 hidden">
         <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl text-center scale-90 mx-4 w-full max-sm" id="modalContent">
             <div id="modalIcon" class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
             </div>
             <h2 class="text-2xl font-black text-slate-800 uppercase" id="successMsg">Success!</h2>
-            <p id="modalSubText" class="text-slate-500 font-bold uppercase text-xs mt-2 tracking-tighter italic">Data Synced Successfully</p>
+            <p id="modalSubText" class="text-slate-500 font-bold uppercase text-xs mt-2 tracking-tighter italic">Process Synced to Cloud</p>
         </div>
     </div>
 
-    <!-- Script Block 1: UI Core (Fastest Load) -->
-    <script>
-        // Global State
+    <!-- MAIN ENGINE -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global State - Single Source of Truth
         window.steps = []; 
         window.cycleResults = []; 
         window.currentCycleData = {}; 
         window.config = { eqId: '', staffId: '', job: '', customFilters: [] };
         
-        // UI Core Logic - Independent of Firebase
-        window.addStepFromSetup = function() {
+        let cloudEmail = localStorage.getItem('goldenTimer_email') || '';
+        let isRunning = false, isPaused = false, isWaiting = false, activeStepIndex = -1;
+        let accumulatedStepTime = 0, lastTimestamp = 0, cycleWaitTime = 0, timerInterval = null;
+
+        // Firebase Configuration
+        const firebaseConfig = JSON.parse(__firebase_config);
+        const app = initializeApp(firebaseConfig);
+        const auth = getAuth(app);
+        const db = getFirestore(app);
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'golden-timer-standard';
+
+        // 1. SETUP UI FUNCTIONS
+        window.addStepFromSetup = () => {
             const input = document.getElementById('setupStepInput');
             if (!input || !input.value.trim()) return;
             window.steps.push(input.value.trim());
@@ -426,7 +439,7 @@
             window.renderSetupSteps();
         };
 
-        window.renderSetupSteps = function() {
+        window.renderSetupSteps = () => {
             const list = document.getElementById('setupStepsList');
             if (!list) return;
             list.innerHTML = window.steps.map((name, idx) => `
@@ -436,12 +449,12 @@
                 </div>`).join('');
         };
 
-        window.removeStep = function(idx) { 
+        window.removeStep = (idx) => { 
             window.steps.splice(idx, 1); 
             window.renderSetupSteps(); 
         };
 
-        window.addFilterRow = function(name = '', value = '') {
+        window.addFilterRow = (name = '', value = '') => {
             const container = document.getElementById('customFiltersContainer');
             if (!container) return;
             const row = document.createElement('div');
@@ -454,35 +467,7 @@
             container.appendChild(row);
         };
 
-        window.openCloudModal = () => document.getElementById('cloudModal').classList.remove('hidden');
-        window.closeCloudModal = () => document.getElementById('cloudModal').classList.add('hidden');
-        window.openSaveDestModal = () => document.getElementById('saveDestModal').classList.remove('hidden');
-        window.closeSaveDestModal = () => document.getElementById('saveDestModal').classList.add('hidden');
-
-        window.showSuccessModal = (title, sub) => {
-            document.getElementById('successMsg').innerText = title;
-            document.getElementById('modalSubText').innerText = sub;
-            document.getElementById('recordModal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('recordModal').classList.add('hidden'), 1200);
-        };
-    </script>
-
-    <!-- Script Block 2: Cloud Engine (Firebase) -->
-    <script type="module">
-        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
-        import { getAuth, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
-        import { getFirestore, doc, setDoc, getDoc, collection, onSnapshot, query, deleteDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
-
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
-        const appId = typeof __app_id !== 'undefined' ? __app_id : 'golden-timer-standard';
-
-        let cloudEmail = localStorage.getItem('goldenTimer_email') || '';
-        let isRunning = false; let isPaused = false; let isWaiting = false; let activeStepIndex = -1;
-        let accumulatedStepTime = 0; let lastTimestamp = 0; let cycleWaitTime = 0; let timerInterval = null;
-
+        // 2. CLOUD & SYNC LOGIC
         onAuthStateChanged(auth, (u) => {
             if (u) {
                 document.getElementById('cloudStatus').innerText = "ONLINE";
@@ -490,19 +475,7 @@
                 if (cloudEmail) applyCloudIdentity(cloudEmail);
             }
         });
-
         signInAnonymously(auth).catch(() => {});
-
-        window.confirmCloudSync = async () => {
-            const email = document.getElementById('cloudEmailInput').value.trim().toLowerCase();
-            if (!email || !email.includes('@')) return alert("Enter valid email");
-            
-            cloudEmail = email;
-            localStorage.setItem('goldenTimer_email', email);
-            await applyCloudIdentity(email);
-            window.closeCloudModal();
-            window.showSuccessModal("Session Active", "Connected to " + email);
-        };
 
         async function applyCloudIdentity(email) {
             if (!auth.currentUser) return;
@@ -514,7 +487,7 @@
                 const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'backups', emailKey));
                 if (snap.exists()) {
                     const data = snap.data();
-                    if (confirm(`DETECTED CLOUD SESSION: ${data.config?.job || 'Recent File'}\nRestore process steps and previous cycle records?`)) {
+                    if (confirm(`Open existing file from Cloud? \nProcess: ${data.config?.job || 'Recent Data'}`)) {
                         applyModelData(data.config);
                         if (data.cycles) {
                             window.cycleResults = data.cycles;
@@ -523,7 +496,7 @@
                     }
                 }
                 listenToModels();
-            } catch (e) { console.error("Cloud Access Error:", e); }
+            } catch (e) { console.error("Cloud Check Error:", e); }
         }
 
         function listenToModels() {
@@ -533,11 +506,10 @@
             onSnapshot(q, (snapshot) => {
                 const models = [];
                 snapshot.forEach(doc => {
-                    const d = doc.data();
-                    if (d.owner === emailKey) models.push({ id: doc.id, ...d });
+                    if (doc.data().owner === emailKey) models.push({ id: doc.id, ...doc.data() });
                 });
                 renderModelsList(models);
-            }, (err) => console.error(err));
+            }, (err) => console.error("Listener failed:", err));
         }
 
         function renderModelsList(models) {
@@ -550,31 +522,31 @@
             section.classList.remove('hidden');
             grid.innerHTML = models.map(m => `
                 <div class="model-card group" onclick="window.loadModel('${m.id}')">
-                    <span class="truncate pr-2">${m.job || 'Unnamed Process'}</span>
+                    <span class="truncate pr-2">${m.job || 'Unnamed Model'}</span>
                     <button onclick="event.stopPropagation(); window.deleteModel('${m.id}')" class="text-slate-300 hover:text-red-500 p-1">
                         <svg class="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>
                     </button>
                 </div>
             `).join('');
-            
-            window.loadModel = async (id) => {
-                const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'models', id));
-                if (snap.exists()) {
-                    applyModelData(snap.data());
-                    window.showSuccessModal("Model Loaded", "Process restored");
-                }
-            };
-
-            window.deleteModel = async (id) => {
-                if(confirm("Delete cloud model?")) {
-                    await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'models', id));
-                }
-            };
         }
+
+        window.loadModel = async (id) => {
+            const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'models', id));
+            if (snap.exists()) {
+                applyModelData(snap.data());
+                window.showSuccessModal("Loaded", "Model applied to setup");
+            }
+        };
+
+        window.deleteModel = async (id) => {
+            if(confirm("Delete model from cloud account?")) {
+                await deleteDoc(doc(db, 'artifacts', appId, 'public', 'data', 'models', id));
+            }
+        };
 
         window.processCloudSave = async (provider) => {
             if (!cloudEmail) return window.openCloudModal();
-            if (!auth.currentUser) return alert("System connecting... try again in 2 seconds.");
+            if (!auth.currentUser) return alert("Waiting for cloud connection... try in 1s");
             
             captureConfig();
             const jobTitle = window.config.job || "Untitled Study";
@@ -595,10 +567,9 @@
             try {
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'models', modelId), data);
                 window.closeSaveDestModal();
-                window.showSuccessModal("Study Secure", `Saved to your ${provider.toUpperCase()} Cloud`);
+                window.showSuccessModal("Export Complete", `Saved to ${provider.toUpperCase()}`);
             } catch (e) {
-                console.error("Cloud Save Error:", e);
-                alert("Cloud Sync Temporarily Unavailable. Please use 'Save to File' instead.");
+                alert("Cloud Sync Temporarily Unavailable. Please download CSV locally.");
             }
         };
 
@@ -615,62 +586,35 @@
             } catch (e) {}
         }
 
-        function applyModelData(data) {
-            document.getElementById('setupEqId').value = data.eqId || '';
-            document.getElementById('setupStaffId').value = data.staffId || '';
-            document.getElementById('setupJob').value = data.job || '';
-            window.steps = data.steps || [];
-            window.renderSetupSteps();
-            const container = document.getElementById('customFiltersContainer');
-            container.innerHTML = '';
-            (data.customFilters || []).forEach(f => window.addFilterRow(f.name, f.options ? f.options.join(', ') : ''));
-        }
-
-        function captureConfig() {
-            window.config.eqId = document.getElementById('setupEqId').value;
-            window.config.staffId = document.getElementById('setupStaffId').value;
-            window.config.job = document.getElementById('setupJob').value;
-            window.config.customFilters = Array.from(document.querySelectorAll('#customFiltersContainer > div')).map(row => {
-                const nameInp = row.querySelector('.filter-name');
-                const valInp = row.querySelector('.filter-value');
-                if (!nameInp) return null;
-                const name = nameInp.value.trim();
-                const opts = valInp.value.trim();
-                return name ? { name, options: opts.split(',').map(s=>s.trim()).filter(s=>s) } : null;
-            }).filter(f => f);
-        }
-
-        // Timer Logic
+        // 3. CORE TIMER LOGIC
         window.goToTimerPage = async () => {
-            captureConfig();
-            if (window.steps.length === 0) return alert("Please add at least one study step.");
-            
-            const cont = document.getElementById('timerDropdownsContainer');
-            cont.innerHTML = '';
-            window.config.customFilters.forEach((f, i) => {
-                const div = document.createElement('div');
-                div.innerHTML = `<label class="text-[9px] font-black text-slate-400 uppercase tracking-tighter ml-1">${f.name}</label>
-                    <select id="timer-filter-${i}" class="industrial-select">
-                        ${f.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
-                    </select>`;
-                cont.appendChild(div);
-            });
+            try {
+                captureConfig();
+                if (window.steps.length === 0) return alert("Please add at least one study step.");
+                
+                const cont = document.getElementById('timerDropdownsContainer');
+                cont.innerHTML = '';
+                window.config.customFilters.forEach((f, i) => {
+                    const div = document.createElement('div');
+                    div.innerHTML = `<label class="text-[9px] font-black text-slate-400 uppercase tracking-tighter ml-1">${f.name}</label>
+                        <select id="timer-filter-${i}" class="industrial-select">
+                            ${f.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                        </select>`;
+                    cont.appendChild(div);
+                });
 
-            syncBackup(); 
+                syncBackup(); 
 
-            document.getElementById('stepGrid').innerHTML = window.steps.map((name, idx) => `
-                <button id="step-btn-${idx}" onclick="window.recordStep(${idx})" class="step-btn step-btn-inactive shadow-md">${idx + 1}. ${name}</button>`).join('');
-            document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString();
-            document.getElementById('setupPage').classList.add('hidden');
-            document.getElementById('timerPage').classList.remove('hidden');
-            updateLCD();
-        };
-
-        window.goHome = () => { 
-            isRunning = false; 
-            clearInterval(timerInterval); 
-            document.getElementById('timerPage').classList.add('hidden'); 
-            document.getElementById('setupPage').classList.remove('hidden'); 
+                document.getElementById('stepGrid').innerHTML = window.steps.map((name, idx) => `
+                    <button id="step-btn-${idx}" onclick="window.recordStep(${idx})" class="step-btn step-btn-inactive shadow-md">${idx + 1}. ${name}</button>`).join('');
+                document.getElementById('currentDateDisplay').innerText = new Date().toLocaleDateString();
+                document.getElementById('setupPage').classList.add('hidden');
+                document.getElementById('timerPage').classList.remove('hidden');
+                updateLCD();
+            } catch (err) {
+                console.error(err);
+                alert("Error opening timer. Check your parameters.");
+            }
         };
 
         function tick() {
@@ -687,8 +631,10 @@
                 isRunning = true;
                 activeStepIndex = idx; 
                 document.getElementById('stopCycleBtn').classList.remove('hidden'); 
+                document.getElementById('sessionStatus').innerText = "Running Study...";
             } else {
                 if (isPaused || isWaiting) return;
+                // If 1 step or clicking Step 1 to auto-cycle
                 if ((window.steps.length === 1 && idx === activeStepIndex) || (idx === 0 && activeStepIndex !== 0)) {
                     window.currentCycleData[activeStepIndex] = (window.currentCycleData[activeStepIndex] || 0) + (accumulatedStepTime / 1000);
                     autoCycle();
@@ -704,7 +650,10 @@
 
         function autoCycle() {
             const selections = {};
-            window.config.customFilters.forEach((f, i) => selections[f.name] = document.getElementById(`timer-filter-${i}`).value);
+            window.config.customFilters.forEach((f, i) => {
+                const el = document.getElementById(`timer-filter-${i}`);
+                selections[f.name] = el ? el.value : "";
+            });
             
             window.cycleResults.push({
                 cycle: window.cycleResults.length + 1,
@@ -718,15 +667,61 @@
             
             accumulatedStepTime = 0; cycleWaitTime = 0; window.currentCycleData = {}; activeStepIndex = 0;
             updateLCD(); updateStepVisuals(); syncBackup();
-            window.showSuccessModal("Cycle Saved", "Synced to cloud backup");
+            window.showSuccessModal("Cycle Recorded", "Synced to cloud");
         }
 
         window.stopCycle = () => {
+            if (!isRunning) return;
             window.currentCycleData[activeStepIndex] = (window.currentCycleData[activeStepIndex] || 0) + (accumulatedStepTime / 1000);
             autoCycle();
             isRunning = false; clearInterval(timerInterval); activeStepIndex = -1; 
             document.getElementById('stopCycleBtn').classList.add('hidden');
+            document.getElementById('sessionStatus').innerText = "Ready to Record";
         };
+
+        // 4. UTILS & MODALS
+        window.openCloudModal = () => document.getElementById('cloudModal').classList.remove('hidden');
+        window.closeCloudModal = () => document.getElementById('cloudModal').classList.add('hidden');
+        window.openSaveDestModal = () => document.getElementById('saveDestModal').classList.remove('hidden');
+        window.closeSaveDestModal = () => document.getElementById('saveDestModal').classList.add('hidden');
+
+        window.confirmCloudSync = async () => {
+            const email = document.getElementById('cloudEmailInput').value.trim().toLowerCase();
+            if (!email || !email.includes('@')) return alert("Enter valid email");
+            cloudEmail = email;
+            localStorage.setItem('goldenTimer_email', email);
+            await applyCloudIdentity(email);
+            window.closeCloudModal();
+            window.showSuccessModal("Linked", "Email sync active");
+        };
+
+        function applyModelData(data) {
+            if (!data) return;
+            document.getElementById('setupEqId').value = data.eqId || '';
+            document.getElementById('setupStaffId').value = data.staffId || '';
+            document.getElementById('setupJob').value = data.job || '';
+            window.steps = data.steps || [];
+            window.renderSetupSteps();
+            const container = document.getElementById('customFiltersContainer');
+            if (container) {
+                container.innerHTML = '';
+                (data.customFilters || []).forEach(f => window.addFilterRow(f.name, f.options ? f.options.join(', ') : ''));
+            }
+        }
+
+        function captureConfig() {
+            window.config.eqId = document.getElementById('setupEqId').value;
+            window.config.staffId = document.getElementById('setupStaffId').value;
+            window.config.job = document.getElementById('setupJob').value;
+            window.config.customFilters = Array.from(document.querySelectorAll('#customFiltersContainer > div')).map(row => {
+                const nameInp = row.querySelector('.filter-name');
+                const valInp = row.querySelector('.filter-value');
+                if (!nameInp || !valInp) return null;
+                const name = nameInp.value.trim();
+                const opts = valInp.value.trim();
+                return name ? { name, options: opts.split(',').map(s=>s.trim()).filter(s=>s) } : null;
+            }).filter(f => f);
+        }
 
         function updateStepVisuals() {
             window.steps.forEach((_, i) => {
@@ -737,17 +732,34 @@
         }
 
         function updateLCD() {
-            document.getElementById('cycleCountDisplay').innerText = window.cycleResults.length;
+            const cnt = document.getElementById('cycleCountDisplay');
+            const lcd = document.getElementById('lastCycleDisplay');
+            if (cnt) cnt.innerText = window.cycleResults.length;
             const last = window.cycleResults.length ? window.cycleResults[window.cycleResults.length-1].netTotal : 0;
-            document.getElementById('lastCycleDisplay').innerText = last.toFixed(2);
+            if (lcd) lcd.innerText = last.toFixed(2);
         }
+
+        window.goHome = () => { 
+            isRunning = false; clearInterval(timerInterval); 
+            document.getElementById('timerPage').classList.add('hidden'); 
+            document.getElementById('setupPage').classList.remove('hidden'); 
+        };
 
         window.togglePause = () => { isPaused = !isPaused; document.getElementById('pauseBtn').innerText = isPaused ? "Resume" : "Pause"; };
         window.toggleWaiting = () => { isWaiting = !isWaiting; document.getElementById('waitBtn').classList.toggle('opacity-50'); };
 
+        window.showSuccessModal = (title, sub) => {
+            const m = document.getElementById('recordModal');
+            if (!m) return;
+            document.getElementById('successMsg').innerText = title;
+            document.getElementById('modalSubText').innerText = sub;
+            m.classList.remove('hidden');
+            setTimeout(() => m.classList.add('hidden'), 1200);
+        };
+
         window.undoLastCycle = async () => { 
             if(window.cycleResults.length > 0) {
-                if(confirm("Delete last cycle record?")) {
+                if(confirm("Erase last cycle record?")) {
                     window.cycleResults.pop(); 
                     await syncBackup();
                     updateLCD();
@@ -756,9 +768,8 @@
         };
         
         window.resetFull = async () => { 
-            if(confirm("Wipe all data and restart study?")) { 
-                window.cycleResults = []; await syncBackup(); updateLCD(); 
-                isRunning = false; clearInterval(timerInterval);
+            if(confirm("WIPE ALL DATA AND RESTART STUDY?")) { 
+                window.cycleResults = []; await syncBackup(); updateLCD(); isRunning = false; clearInterval(timerInterval);
                 accumulatedStepTime = 0; document.getElementById('mainTimer').innerText = "0.00";
                 window.steps.forEach((_, i) => {
                     const b = document.getElementById(`step-btn-${i}`);
@@ -767,16 +778,15 @@
             } 
         };
 
-        // File Operations
         window.downloadReport = () => {
-            if (window.cycleResults.length === 0) return alert("No records to save.");
+            if (window.cycleResults.length === 0) return alert("No records collected yet.");
             const csv = generateCSVContent();
             const blob = new Blob(["\ufeff" + csv], { type: 'text/csv;charset=utf-8;' });
             const url = window.URL.createObjectURL(blob);
             const a = document.createElement("a");
             a.style.display = 'none';
             a.href = url;
-            a.download = `GoldenTimer_${window.config.job || 'Study'}_${new Date().toISOString().slice(0,10)}.csv`;
+            a.download = `GoldenTimer_${window.config.job || 'Report'}_${new Date().toISOString().slice(0,10)}.csv`;
             document.body.appendChild(a);
             a.click();
             setTimeout(() => {
@@ -786,7 +796,7 @@
         };
 
         function generateCSVContent() {
-            let csv = `"Equipment","${window.config.eqId}"\n"Staff","${window.config.staffId}"\n"Process","${window.config.job}"\n"Backup Email","${cloudEmail || 'None'}"\n`;
+            let csv = `"Equipment","${window.config.eqId}"\n"Staff","${window.config.staffId}"\n"Process","${window.config.job}"\n"Account","${cloudEmail || 'Unlinked'}"\n`;
             const filters = window.config.customFilters.map(f => `"${f.name}"`).join(",");
             csv += `\n"Cycle","Date","Time",${window.steps.map(s => `"${s}"`).join(",")},${filters ? filters + ',' : ''}"Wait (s)","Net (s)"\n`;
             window.cycleResults.forEach(r => {
@@ -799,7 +809,7 @@
         }
 
         window.shareReport = async () => {
-            if (window.cycleResults.length === 0) return alert("No records to share.");
+            if (window.cycleResults.length === 0) return alert("No data to share.");
             const csv = generateCSVContent();
             if (navigator.share) {
                 const file = new File(["\ufeff" + csv], 'study_data.csv', { type: 'text/csv' });

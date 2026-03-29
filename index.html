@@ -231,11 +231,11 @@
                 <svg class="w-8 h-8" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"></path></svg>
             </div>
             <h2 class="text-2xl font-black text-blue-900 uppercase mb-2">Cloud Account</h2>
-            <p class="text-xs font-bold text-slate-500 uppercase mb-6">Connect your email to sync across all devices</p>
+            <p class="text-xs font-bold text-slate-500 uppercase mb-6">Enter email to restore your previous sessions</p>
             <input type="email" id="cloudEmailInput" class="w-full p-4 border-2 border-slate-200 rounded-xl mb-4 font-black outline-none focus:border-blue-500 text-center" placeholder="yourname@email.com">
             <div class="grid grid-cols-2 gap-3">
                 <button onclick="window.closeCloudModal()" class="py-4 bg-slate-100 rounded-xl font-black uppercase text-xs">Cancel</button>
-                <button onclick="window.confirmCloudSync()" class="py-4 bg-blue-600 text-white rounded-xl font-black uppercase text-xs">Sync Now</button>
+                <button onclick="window.confirmCloudSync()" class="py-4 bg-blue-600 text-white rounded-xl font-black uppercase text-xs">Load Data</button>
             </div>
         </div>
     </div>
@@ -243,8 +243,8 @@
     <!-- SAVE DESTINATION MODAL -->
     <div id="saveDestModal" class="modal-overlay hidden">
         <div class="modal-box shadow-2xl">
-            <h2 class="text-xl font-black text-slate-800 uppercase mb-1">Save Process</h2>
-            <p class="text-[10px] font-bold text-slate-400 uppercase mb-6 italic">Select your cloud storage destination</p>
+            <h2 class="text-xl font-black text-slate-800 uppercase mb-1">Cloud Export</h2>
+            <p class="text-[10px] font-bold text-slate-400 uppercase mb-6 italic">Select your primary cloud backup destination</p>
             
             <div class="space-y-2 text-left">
                 <div onclick="window.processCloudSave('google')" class="cloud-option">
@@ -253,7 +253,7 @@
                     </div>
                     <div>
                         <p class="font-black text-xs uppercase">Google Drive</p>
-                        <p class="text-[9px] text-slate-500 font-bold uppercase">Sync as Process File</p>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase">Linked to your email</p>
                     </div>
                 </div>
 
@@ -263,17 +263,7 @@
                     </div>
                     <div>
                         <p class="font-black text-xs uppercase">OneDrive</p>
-                        <p class="text-[9px] text-slate-500 font-bold uppercase">Save to MS Cloud</p>
-                    </div>
-                </div>
-
-                <div onclick="window.downloadReport()" class="cloud-option">
-                    <div class="w-10 h-10 bg-white border border-slate-200 rounded-lg flex items-center justify-center">
-                        <svg class="w-6 h-6 text-slate-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"></path></svg>
-                    </div>
-                    <div>
-                        <p class="font-black text-xs uppercase">Local File</p>
-                        <p class="text-[9px] text-slate-500 font-bold uppercase">Save to Device/Computer</p>
+                        <p class="text-[9px] text-slate-500 font-bold uppercase">Sync to MS Cloud</p>
                     </div>
                 </div>
             </div>
@@ -286,9 +276,9 @@
     <div id="setupPage" class="w-full max-w-[500px] setup-container border border-slate-200 rounded-[2rem] p-6 md:p-8 shadow-2xl my-auto">
         <div class="flex justify-between items-start mb-6">
             <h1 class="text-4xl font-black text-blue-900 uppercase tracking-tight italic">Golden Timer</h1>
-            <button onclick="window.openCloudModal()" id="cloudBtn" class="bg-blue-100 text-blue-600 px-3 py-2 rounded-xl text-[10px] font-black uppercase flex items-center gap-1 hover:bg-blue-200 transition">
+            <button onclick="window.openCloudModal()" id="cloudBtn" class="bg-blue-600 text-white px-3 py-2 rounded-xl text-[10px] font-black uppercase flex items-center gap-1 hover:bg-blue-700 transition shadow-lg">
                 <svg class="w-3 h-3" fill="currentColor" viewBox="0 0 20 20"><path d="M5.5 13a3.5 3.5 0 01-.369-6.98 4 4 0 117.753-1.977A4.5 4.5 0 1113.5 13H11V10h3l-4-5-4 5h3v3H5.5z"></path></svg>
-                Sync with Email
+                From Cloud
             </button>
         </div>
         
@@ -316,22 +306,22 @@
 
             <!-- LOAD SAVED PROCESS MODELS -->
             <div id="savedModelsSection" class="pt-6 border-t border-slate-200 hidden">
-                <label class="block text-[14px] bold-label uppercase mb-3 text-blue-600">Saved Cloud Models</label>
+                <label class="block text-[14px] bold-label uppercase mb-3 text-blue-600">Restore Process Steps</label>
                 <div id="modelsGrid" class="grid grid-cols-1 gap-2 max-h-32 overflow-y-auto pr-1 custom-scrollbar"></div>
             </div>
 
             <div class="pt-6 border-t border-slate-200">
                 <div class="flex justify-between items-center mb-3">
-                    <label class="text-[14px] bold-label uppercase text-slate-800">Parameters (Cargo Type etc.)</label>
+                    <label class="text-[14px] bold-label uppercase text-slate-800">Process Parameters</label>
                     <button onclick="window.addFilterRow()" class="text-[10px] bg-blue-600 text-white px-3 py-1.5 rounded-lg font-black uppercase active:scale-95 transition">New Parameter +</button>
                 </div>
                 <div id="customFiltersContainer" class="space-y-2"></div>
             </div>
 
             <div class="pt-6 border-t border-slate-200">
-                <label class="block text-[14px] bold-label uppercase mb-3 text-slate-800">Process Sequence <span class="text-blue-600 font-black">*</span></label>
+                <label class="block text-[14px] bold-label uppercase mb-3 text-slate-800">Add Study Steps <span class="text-blue-600 font-black">*</span></label>
                 <div class="flex flex-nowrap gap-2 mb-4 w-full">
-                    <input type="text" id="setupStepInput" class="flex-1 min-w-0 p-3 bg-white border-2 border-slate-100 rounded-xl outline-none text-black font-bold text-sm" placeholder="Add a step...">
+                    <input type="text" id="setupStepInput" class="flex-1 min-w-0 p-3 bg-white border-2 border-slate-100 rounded-xl outline-none text-black font-bold text-sm" placeholder="e.g., Loading Cargo">
                     <button id="addStepBtn" onclick="window.addStepFromSetup()" class="shrink-0 bg-blue-600 text-white px-5 py-2 rounded-xl font-black text-sm active:scale-95 transition shadow-lg">Add</button>
                 </div>
                 <div id="setupStepsList" class="space-y-2 max-h-48 overflow-y-auto pr-1 custom-scrollbar"></div>
@@ -355,8 +345,8 @@
 
         <div class="timer-container shadow-2xl">
             <div class="lcd-header">
-                <div>LAST <span id="lastCycleDisplay">0.00</span></div>
-                <div>CYCLES <span id="cycleCountDisplay">0</span></div>
+                <div>LAST CYCLE <span id="lastCycleDisplay">0.00</span></div>
+                <div>TOTAL CYCLES <span id="cycleCountDisplay">0</span></div>
             </div>
             <div class="timer-text-container">
                 <div class="lcd-label">STOPWATCH</div>
@@ -380,27 +370,32 @@
 
         <button id="stopCycleBtn" onclick="window.stopCycle()" class="btn-red w-full py-6 text-2xl uppercase tracking-widest mt-4 shadow-xl active:scale-95 transition hidden">STOP & RECORD</button>
 
-        <button onclick="window.openSaveDestModal()" class="w-full py-6 bg-[#039be5] text-white rounded-2xl text-xl font-black uppercase tracking-widest active:scale-95 transition mt-6 shadow-2xl border-b-4 border-[#01579b] flex items-center justify-center gap-2">
-            <svg class="w-6 h-6" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
-            Export/Save Report
+        <!-- DOWNLOAD BUTTON (RESTORED) -->
+        <button onclick="window.downloadReport()" class="w-full py-6 bg-[#ffffff] text-[#121417] rounded-2xl text-xl font-black uppercase tracking-widest active:scale-95 transition mt-6 shadow-2xl border-4 border-slate-700">
+            Download CSV Report
+        </button>
+
+        <button onclick="window.openSaveDestModal()" class="w-full py-4 bg-slate-800 text-white rounded-2xl text-sm font-black uppercase tracking-widest active:scale-95 transition mt-3 border-2 border-slate-600 flex items-center justify-center gap-2">
+            <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24"><path d="M19 13h-6v6h-2v-6H5v-2h6V5h2v6h6v2z"/></svg>
+            Save Model to Cloud
         </button>
 
         <button onclick="window.shareReport()" class="w-full py-5 bg-white text-slate-800 rounded-2xl text-lg font-black uppercase tracking-widest active:scale-95 transition mt-3 shadow-lg flex items-center justify-center gap-2">
             <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.684 13.342C8.886 12.938 9 12.482 9 12c0-.482-.114-.938-.316-1.342m0 2.684a3 3 0 110-2.684m0 2.684l6.632 3.316m-6.632-6l6.632-3.316m0 0a3 3 0 105.367-2.684 3 3 0 00-5.367 2.684zm0 9.316a3 3 0 105.368 2.684 3 3 0 00-5.368-2.684z"></path></svg>
-            Direct Share
+            Share Report
         </button>
 
-        <div id="sessionStatus" class="text-center text-[10px] font-black text-slate-600 uppercase tracking-widest py-3 italic">Ready to Record</div>
+        <div id="sessionStatus" class="text-center text-[10px] font-black text-slate-600 uppercase tracking-widest py-3 italic">Ready - Start Study</div>
     </div>
 
     <!-- Success Modal -->
     <div id="recordModal" class="fixed inset-0 flex items-center justify-center bg-black/90 backdrop-blur-sm z-50 hidden">
-        <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl text-center scale-90 mx-4 w-full max-w-sm" id="modalContent">
+        <div class="bg-white p-10 rounded-[2.5rem] shadow-2xl text-center scale-90 mx-4 w-full max-sm" id="modalContent">
             <div id="modalIcon" class="w-16 h-16 bg-green-500 text-white rounded-full flex items-center justify-center mx-auto mb-4 shadow-lg">
                 <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="4" d="M5 13l4 4L19 7"></path></svg>
             </div>
-            <h2 class="text-2xl font-black text-slate-800 uppercase" id="successMsg">Synced!</h2>
-            <p id="modalSubText" class="text-slate-500 font-bold uppercase text-xs mt-2 tracking-tighter italic">Data secured in Golden Cloud</p>
+            <h2 class="text-2xl font-black text-slate-800 uppercase" id="successMsg">Success!</h2>
+            <p id="modalSubText" class="text-slate-500 font-bold uppercase text-xs mt-2 tracking-tighter italic">Data Synced Successfully</p>
         </div>
     </div>
 
@@ -418,49 +413,71 @@
         let isRunning = false; let isPaused = false; let isWaiting = false; let activeStepIndex = -1;
         let accumulatedStepTime = 0; let lastTimestamp = 0; let cycleWaitTime = 0; let timerInterval = null;
 
-        // Firebase Configuration
-        const firebaseConfig = JSON.parse(__firebase_config);
-        const app = initializeApp(firebaseConfig);
-        const auth = getAuth(app);
-        const db = getFirestore(app);
+        // UI CORE FUNCTIONS
+        window.addStepFromSetup = () => {
+            const input = document.getElementById('setupStepInput');
+            if (!input || !input.value.trim()) return;
+            steps.push(input.value.trim());
+            input.value = '';
+            window.renderSetupSteps();
+        };
+
+        window.renderSetupSteps = () => {
+            const list = document.getElementById('setupStepsList');
+            if (!list) return;
+            list.innerHTML = steps.map((name, idx) => `
+                <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 text-xs font-black uppercase text-slate-800">
+                    <span>#${idx + 1} ${name}</span>
+                    <button onclick="window.removeStep(${idx})" class="text-red-500">REMOVE</button>
+                </div>`).join('');
+        };
+
+        window.removeStep = (idx) => { steps.splice(idx, 1); window.renderSetupSteps(); };
+
+        window.addFilterRow = (name = '', value = '') => {
+            const container = document.getElementById('customFiltersContainer');
+            if (!container) return;
+            const row = document.createElement('div');
+            row.className = "flex gap-2 items-center";
+            row.innerHTML = `
+                <input type="text" value="${name}" placeholder="Label" class="flex-1 p-2 border border-slate-300 rounded-lg text-[10px] font-bold filter-name text-black">
+                <input type="text" value="${value}" placeholder="Options (A, B...)" class="flex-1 p-2 border border-slate-300 rounded-lg text-[10px] font-bold filter-value text-black">
+                <button onclick="this.parentElement.remove()" class="text-red-500 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg></button>
+            `;
+            container.appendChild(row);
+        };
+
+        window.openCloudModal = () => document.getElementById('cloudModal').classList.remove('hidden');
+        window.closeCloudModal = () => document.getElementById('cloudModal').classList.add('hidden');
+        window.openSaveDestModal = () => document.getElementById('saveDestModal').classList.remove('hidden');
+        window.closeSaveDestModal = () => document.getElementById('saveDestModal').classList.add('hidden');
+
+        // CLOUD INITIALIZATION
+        let db, auth;
         const appId = typeof __app_id !== 'undefined' ? __app_id : 'golden-timer-standard';
 
-        // Initialization
-        const init = async () => {
-            if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
-                await signInWithCustomToken(auth, __initial_auth_token);
-            } else {
-                await signInAnonymously(auth);
-            }
-        };
+        try {
+            const firebaseConfig = JSON.parse(__firebase_config);
+            const app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
 
-        onAuthStateChanged(auth, (u) => {
-            if (u) {
-                document.getElementById('cloudStatus').innerText = "ONLINE";
-                document.getElementById('cloudStatus').style.color = "#4ade80";
-                if (cloudEmail) {
-                    applyCloudIdentity(cloudEmail);
+            onAuthStateChanged(auth, (u) => {
+                if (u) {
+                    document.getElementById('cloudStatus').innerText = "ONLINE";
+                    document.getElementById('cloudStatus').style.color = "#4ade80";
+                    if (cloudEmail) applyCloudIdentity(cloudEmail);
                 }
-            }
-        });
+            });
 
-        init();
-
-        // UI Modal Logic
-        window.openCloudModal = () => {
-            document.getElementById('cloudEmailInput').value = cloudEmail;
-            document.getElementById('cloudModal').classList.remove('hidden');
-        };
-        window.closeCloudModal = () => document.getElementById('cloudModal').classList.add('hidden');
-
-        window.openSaveDestModal = () => {
-            document.getElementById('saveDestModal').classList.remove('hidden');
-        };
-        window.closeSaveDestModal = () => document.getElementById('saveDestModal').classList.add('hidden');
+            signInAnonymously(auth).catch(() => {});
+        } catch (err) {
+            document.getElementById('cloudStatus').innerText = "OFFLINE";
+        }
 
         window.confirmCloudSync = async () => {
             const email = document.getElementById('cloudEmailInput').value.trim().toLowerCase();
-            if (!email || !email.includes('@')) return alert("Please enter a valid email");
+            if (!email || !email.includes('@')) return alert("Enter valid email");
             
             cloudEmail = email;
             localStorage.setItem('goldenTimer_email', email);
@@ -470,18 +487,16 @@
         };
 
         async function applyCloudIdentity(email) {
-            if (!auth.currentUser) return;
+            if (!auth || !auth.currentUser) return;
             document.getElementById('userEmailTag').classList.remove('hidden');
             document.getElementById('activeEmail').innerText = email;
-            document.getElementById('cloudBtn').innerText = "Linked";
             
-            // Rule 1: Fixed Path for backups
-            const emailKey = btoa(email).replace(/=/g, ""); 
+            const emailKey = btoa(email).replace(/=/g, "").replace(/\//g, "_").replace(/\+/g, "-"); 
             try {
                 const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'backups', emailKey));
                 if (snap.exists()) {
                     const data = snap.data();
-                    if (confirm(`Open existing file from cloud? \nProcess: ${data.config?.job || 'Recent Session'}`)) {
+                    if (confirm(`Detected Cloud Backup for ${email}. Load previous file?`)) {
                         if (data.config) applyModelData(data.config);
                         if (data.cycles) {
                             cycleResults = data.cycles;
@@ -490,20 +505,21 @@
                     }
                 }
                 listenToModels();
-            } catch (e) { console.error(e); }
+            } catch (e) { console.error("Sync Error", e); }
         }
 
         function listenToModels() {
-            if (!db || !cloudEmail || !auth.currentUser) return;
-            const emailKey = btoa(cloudEmail).replace(/=/g, "");
+            if (!db || !cloudEmail) return;
+            const emailKey = btoa(cloudEmail).replace(/=/g, "").replace(/\//g, "_").replace(/\+/g, "-");
             const q = query(collection(db, 'artifacts', appId, 'public', 'data', 'models'));
             onSnapshot(q, (snapshot) => {
                 const models = [];
                 snapshot.forEach(doc => {
-                    if (doc.data().owner === emailKey) models.push({ id: doc.id, ...doc.data() });
+                    const data = doc.data();
+                    if (data.owner === emailKey) models.push({ id: doc.id, ...data });
                 });
                 renderModelsList(models);
-            }, (err) => console.error(err));
+            });
         }
 
         function renderModelsList(models) {
@@ -528,7 +544,7 @@
             const snap = await getDoc(doc(db, 'artifacts', appId, 'public', 'data', 'models', id));
             if (snap.exists()) {
                 applyModelData(snap.data());
-                window.showSuccessModal("Model Loaded", "Process restored");
+                window.showSuccessModal("Process Loaded", "Model applied");
             }
         };
 
@@ -542,7 +558,7 @@
             if (!cloudEmail) return window.openCloudModal();
             captureConfig();
             const jobTitle = config.job || "Untitled Process";
-            const emailKey = btoa(cloudEmail).replace(/=/g, "");
+            const emailKey = btoa(cloudEmail).replace(/=/g, "").replace(/\//g, "_").replace(/\+/g, "-");
             const modelId = emailKey + "_" + jobTitle.replace(/\s+/g, '-').toLowerCase() + "_" + Date.now().toString().slice(-4);
             
             const data = {
@@ -559,24 +575,23 @@
             try {
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'models', modelId), data);
                 window.closeSaveDestModal();
-                window.showSuccessModal("Export Success", `Saved to ${provider.toUpperCase()} via cloud identity`);
+                window.showSuccessModal("Export Success", `Process file saved to ${provider.toUpperCase()}`);
             } catch (e) {
-                console.error(e);
-                alert("Synchronization failed. Check internet and try again.");
+                alert("Cloud Sync Failed - Please check internet connection.");
             }
         };
 
         async function syncBackup() {
             if (!cloudEmail || !db || !auth.currentUser) return;
             captureConfig();
-            const emailKey = btoa(cloudEmail).replace(/=/g, "");
+            const emailKey = btoa(cloudEmail).replace(/=/g, "").replace(/\//g, "_").replace(/\+/g, "-");
             try {
                 await setDoc(doc(db, 'artifacts', appId, 'public', 'data', 'backups', emailKey), {
                     config: config,
                     cycles: cycleResults,
                     updatedAt: Date.now()
                 });
-            } catch (e) { console.error(e); }
+            } catch (e) {}
         }
 
         function applyModelData(data) {
@@ -595,46 +610,19 @@
             config.staffId = document.getElementById('setupStaffId').value;
             config.job = document.getElementById('setupJob').value;
             config.customFilters = Array.from(document.querySelectorAll('#customFiltersContainer > div')).map(row => {
-                const name = row.querySelector('.filter-name').value.trim();
-                const opts = row.querySelector('.filter-value').value.trim();
+                const nameInput = row.querySelector('.filter-name');
+                const valInput = row.querySelector('.filter-value');
+                if (!nameInput || !valInput) return null;
+                const name = nameInput.value.trim();
+                const opts = valInput.value.trim();
                 return name ? { name, options: opts.split(',').map(s=>s.trim()).filter(s=>s) } : null;
             }).filter(f => f);
         }
 
-        // Timer Engine
-        window.addStepFromSetup = () => {
-            const input = document.getElementById('setupStepInput');
-            if (!input.value.trim()) return;
-            steps.push(input.value.trim());
-            input.value = '';
-            window.renderSetupSteps();
-        };
-
-        window.renderSetupSteps = () => {
-            document.getElementById('setupStepsList').innerHTML = steps.map((name, idx) => `
-                <div class="flex items-center justify-between bg-white p-3 rounded-xl border border-slate-200 text-xs font-black uppercase text-slate-800">
-                    <span>#${idx + 1} ${name}</span>
-                    <button onclick="window.removeStep(${idx})" class="text-red-500">REMOVE</button>
-                </div>`).join('');
-        };
-
-        window.removeStep = (idx) => { steps.splice(idx, 1); window.renderSetupSteps(); };
-
-        window.addFilterRow = (name = '', value = '') => {
-            const container = document.getElementById('customFiltersContainer');
-            const row = document.createElement('div');
-            row.className = "flex gap-2 items-center";
-            row.innerHTML = `
-                <input type="text" value="${name}" placeholder="Name" class="flex-1 p-2 border border-slate-300 rounded-lg text-[10px] font-bold filter-name text-black">
-                <input type="text" value="${value}" placeholder="Options (A, B...)" class="flex-1 p-2 border border-slate-300 rounded-lg text-[10px] font-bold filter-value text-black">
-                <button onclick="this.parentElement.remove()" class="text-red-500 p-1"><svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg></button>
-            `;
-            container.appendChild(row);
-        };
-
+        // TIMER CORE ENGINE
         window.goToTimerPage = async () => {
             captureConfig();
-            if (steps.length === 0) return alert("Add steps first");
+            if (steps.length === 0) return alert("Please add at least one step.");
             
             const cont = document.getElementById('timerDropdownsContainer');
             cont.innerHTML = '';
@@ -704,14 +692,13 @@
             
             accumulatedStepTime = 0; cycleWaitTime = 0; currentCycleData = {}; activeStepIndex = 0;
             updateLCD(); updateStepVisuals(); syncBackup();
-            window.showSuccessModal("Logged!", "Cycle secure");
+            window.showSuccessModal("Cycle Saved", "Synced to cloud backup");
         }
 
         window.stopCycle = () => {
             currentCycleData[activeStepIndex] = (currentCycleData[activeStepIndex] || 0) + (accumulatedStepTime / 1000);
             autoCycle();
             stopTimer();
-            window.showSuccessModal("Stopped", "Session complete");
         };
 
         function stopTimer() { clearInterval(timerInterval); isRunning = false; activeStepIndex = -1; document.getElementById('stopCycleBtn').classList.add('hidden'); }
@@ -725,9 +712,11 @@
         }
 
         function updateLCD(lastTime) {
-            document.getElementById('cycleCountDisplay').innerText = cycleResults.length;
+            const count = document.getElementById('cycleCountDisplay');
+            const lcd = document.getElementById('lastCycleDisplay');
+            if (count) count.innerText = cycleResults.length;
             const last = lastTime || (cycleResults.length ? cycleResults[cycleResults.length-1].netTotal : 0);
-            document.getElementById('lastCycleDisplay').innerText = last.toFixed(2);
+            if (lcd) lcd.innerText = last.toFixed(2);
         }
 
         window.togglePause = () => { isPaused = !isPaused; document.getElementById('pauseBtn').innerText = isPaused ? "Resume" : "Pause"; };
@@ -737,7 +726,28 @@
             document.getElementById('successMsg').innerText = title;
             document.getElementById('modalSubText').innerText = sub;
             document.getElementById('recordModal').classList.remove('hidden');
-            setTimeout(() => document.getElementById('recordModal').classList.add('hidden'), 800);
+            setTimeout(() => document.getElementById('recordModal').classList.add('hidden'), 1000);
+        };
+
+        window.undoLastCycle = async () => { 
+            if(cycleResults.length > 0) {
+                if(confirm("Delete last cycle?")) {
+                    cycleResults.pop(); 
+                    await syncBackup();
+                    updateLCD();
+                }
+            } 
+        };
+        
+        window.resetFull = async () => { 
+            if(confirm("RESET ALL DATA?")) { 
+                cycleResults = []; await syncBackup(); updateLCD(); stopTimer();
+                accumulatedStepTime = 0; document.getElementById('mainTimer').innerText = "0.00";
+                steps.forEach((_, i) => {
+                    const b = document.getElementById(`step-btn-${i}`);
+                    if(b) b.className = 'step-btn step-btn-inactive shadow-md';
+                });
+            } 
         };
 
         window.downloadReport = () => {
@@ -747,11 +757,10 @@
             link.href = URL.createObjectURL(blob);
             link.download = `GoldenTimer_Report_${new Date().toISOString().slice(0,10)}.csv`;
             link.click();
-            window.closeSaveDestModal();
         };
 
         function generateCSVContent() {
-            let csv = `"Equipment","${config.eqId}"\n"Staff","${config.staffId}"\n"Process","${config.job}"\n`;
+            let csv = `"Equipment","${config.eqId}"\n"Staff","${config.staffId}"\n"Process","${config.job}"\n"Account","${cloudEmail || 'Local'}"\n`;
             const filters = config.customFilters.map(f => `"${f.name}"`).join(",");
             csv += `\n"Cycle","Date","Time",${steps.map(s => `"${s}"`).join(",")},${filters ? filters + ',' : ''}"Wait (s)","Net (s)"\n`;
             cycleResults.forEach(r => {
@@ -766,7 +775,7 @@
         window.shareReport = async () => {
             const csv = generateCSVContent();
             if (navigator.share) {
-                const file = new File(["\ufeff" + csv], 'report.csv', { type: 'text/csv' });
+                const file = new File(["\ufeff" + csv], 'study_report.csv', { type: 'text/csv' });
                 await navigator.share({ title: 'Cycle Study', files: [file] });
             } else { window.downloadReport(); }
         };
